@@ -22,7 +22,7 @@ var Modules = map[string]string{
 	"admin":      AdminJs,
 	"chequebook": ChequebookJs,
 	"clique":     CliqueJs,
-	"ftmash":     FtmashJs,
+	"crxash":     CrxashJs,
 	"debug":      DebugJs,
 	"crx":        CrxJs,
 	"miner":      MinerJs,
@@ -118,9 +118,9 @@ web3._extend({
 });
 `
 
-const FtmashJs = `
+const CrxashJs = `
 web3._extend({
-	property: 'ftmash',
+	property: 'crxash',
 	methods: [
 		new web3._extend.Method({
 			name: 'getWork',
