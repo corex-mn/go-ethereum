@@ -3129,7 +3129,7 @@ ContractFactory.prototype.getData = function () {
  * @param {Address} contract address
  */
 var Contract = function (crx, abi, address) {
-    this.crx = crx;
+    this._crx = crx;
     this.transactionHash = null;
     this.address = address;
     this.abi = abi;
