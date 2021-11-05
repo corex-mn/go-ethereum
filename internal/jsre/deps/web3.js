@@ -926,7 +926,7 @@ var SolidityParam = require('./param');
  * @returns {SolidityParam}
  */
 var formatInputInt = function (value) {
-    BigNumber.config(c.FTM_BIGNUMBER_ROUNDING_MODE);
+    BigNumber.config(c.CRX_BIGNUMBER_ROUNDING_MODE);
     var result = utils.padLeft(utils.toTwosComplement(value).toString(16), 64);
     return new SolidityParam(result);
 };
@@ -1758,10 +1758,10 @@ if (typeof XMLHttpRequest === 'undefined') {
  */
 
 
-/// required to define FTM_BIGNUMBER_ROUNDING_MODE
+/// required to define CRX_BIGNUMBER_ROUNDING_MODE
 var BigNumber = require('bignumber.js');
 
-var FTM_UNITS = [
+var CRX_UNITS = [
     'wei',
     'kwei',
     'Mwei',
@@ -1792,11 +1792,11 @@ var FTM_UNITS = [
 ];
 
 module.exports = {
-    FTM_PADDING: 32,
-    FTM_SIGNATURE_LENGTH: 4,
-    FTM_UNITS: FTM_UNITS,
-    FTM_BIGNUMBER_ROUNDING_MODE: { ROUNDING_MODE: BigNumber.ROUND_DOWN },
-    FTM_POLLING_TIMEOUT: 1000/2,
+    CRX_PADDING: 32,
+    CRX_SIGNATURE_LENGTH: 4,
+    CRX_UNITS: CRX_UNITS,
+    CRX_BIGNUMBER_ROUNDING_MODE: { ROUNDING_MODE: BigNumber.ROUND_DOWN },
+    CRX_POLLING_TIMEOUT: 1000/2,
     defaultBlock: 'latest',
     defaultAccount: undefined
 };
@@ -1912,17 +1912,17 @@ var unitMap = {
     'gether':       '1000000000000000000000000000',
     'tether':       '1000000000000000000000000000000',
 
-    'noftm':      '0',
-    'femtoftm':   '1000',
-    'picoftm':    '1000000',
-    'nanoftm':    '1000000000',
-    'microftm':   '1000000000000',
-    'milliftm':   '1000000000000000',
-    'ftm':        '1000000000000000000',
-    'kftm':       '1000000000000000000000',
-    'mftm':       '1000000000000000000000000',
-    'gftm':       '1000000000000000000000000000',
-    'tftm':       '1000000000000000000000000000000'
+    'nocrx':      '0',
+    'femtocrx':   '1000',
+    'picocrx':    '1000000',
+    'nanocrx':    '1000000000',
+    'microcrx':   '1000000000000',
+    'millicrx':   '1000000000000000',
+    'crx':        '1000000000000000000',
+    'kcrx':       '1000000000000000000000',
+    'mcrx':       '1000000000000000000000000',
+    'gcrx':       '1000000000000000000000000000',
+    'tcrx':       '1000000000000000000000000000000'
 };
 
 /**
@@ -2540,7 +2540,7 @@ module.exports={
 
 var RequestManager = require('./web3/requestmanager');
 var Iban = require('./web3/iban');
-var Ftm = require('./web3/methods/ftm');
+var Crx = require('./web3/methods/crx');
 var Debug = require('./web3/methods/debug');
 var Sfc = require('./web3/methods/sfc');
 var Abft = require('./web3/methods/abft');
@@ -2566,7 +2566,7 @@ var BigNumber = require('bignumber.js');
 function Web3 (provider) {
     this._requestManager = new RequestManager(provider);
     this.currentProvider = provider;
-    this.ftm = new Ftm(this);
+    this.crx = new Crx(this);
     this.debug = new Debug(this);
     this.sfc = new Sfc(this);
     this.abft = new Abft(this);
@@ -2667,7 +2667,7 @@ Web3.prototype.createBatch = function () {
 module.exports = Web3;
 
 
-},{"./utils/sha3":19,"./utils/utils":20,"./version.json":21,"./web3/batch":24,"./web3/extend":28,"./web3/httpprovider":32,"./web3/iban":33,"./web3/ipcprovider":34,"./web3/methods/db":37,"./web3/methods/ftm":38,"./web3/methods/debug":380,"./web3/methods/sfc":381,"./web3/methods/abft":382,"./web3/methods/dag":383,"./web3/methods/net":39,"./web3/methods/personal":40,"./web3/methods/shh":41,"./web3/methods/swarm":42,"./web3/property":45,"./web3/requestmanager":46,"./web3/settings":47,"bignumber.js":"bignumber.js"}],23:[function(require,module,exports){
+},{"./utils/sha3":19,"./utils/utils":20,"./version.json":21,"./web3/batch":24,"./web3/extend":28,"./web3/httpprovider":32,"./web3/iban":33,"./web3/ipcprovider":34,"./web3/methods/db":37,"./web3/methods/crx":38,"./web3/methods/debug":380,"./web3/methods/sfc":381,"./web3/methods/abft":382,"./web3/methods/dag":383,"./web3/methods/net":39,"./web3/methods/personal":40,"./web3/methods/shh":41,"./web3/methods/swarm":42,"./web3/property":45,"./web3/requestmanager":46,"./web3/settings":47,"bignumber.js":"bignumber.js"}],23:[function(require,module,exports){
 /*
     This file is part of web3.js.
 
@@ -2746,7 +2746,7 @@ AllSolidityEvents.prototype.execute = function (options, callback) {
 
     var o = this.encode(options);
     var formatter = this.decode.bind(this);
-    return new Filter(o, 'ftm', this._requestManager, watches.ftm(), formatter, callback);
+    return new Filter(o, 'crx', this._requestManager, watches.crx(), formatter, callback);
 };
 
 AllSolidityEvents.prototype.attachToContract = function (contract) {
@@ -2884,7 +2884,7 @@ var addFunctionsToContract = function (contract) {
     contract.abi.filter(function (json) {
         return json.type === 'function';
     }).map(function (json) {
-        return new SolidityFunction(contract._ftm, json, contract.address);
+        return new SolidityFunction(contract._crx, json, contract.address);
     }).forEach(function (f) {
         f.attachToContract(contract);
     });
@@ -2902,11 +2902,11 @@ var addEventsToContract = function (contract) {
         return json.type === 'event';
     });
 
-    var All = new AllEvents(contract._ftm._requestManager, events, contract.address);
+    var All = new AllEvents(contract._crx._requestManager, events, contract.address);
     All.attachToContract(contract);
 
     events.map(function (json) {
-        return new SolidityEvent(contract._ftm._requestManager, json, contract.address);
+        return new SolidityEvent(contract._crx._requestManager, json, contract.address);
     }).forEach(function (e) {
         e.attachToContract(contract);
     });
@@ -2926,7 +2926,7 @@ var checkForContractAddress = function(contract, callback){
         callbackFired = false;
 
     // wait for receipt
-    var filter = contract._ftm.filter('latest', function(e){
+    var filter = contract._crx.filter('latest', function(e){
         if (!e && !callbackFired) {
             count++;
 
@@ -2944,10 +2944,10 @@ var checkForContractAddress = function(contract, callback){
 
             } else {
 
-                contract._ftm.getTransactionReceipt(contract.transactionHash, function(e, receipt){
+                contract._crx.getTransactionReceipt(contract.transactionHash, function(e, receipt){
                     if(receipt && !callbackFired) {
 
-                        contract._ftm.getCode(receipt.contractAddress, function(e, code){
+                        contract._crx.getCode(receipt.contractAddress, function(e, code){
                             /*jshint maxcomplexity: 6 */
 
                             if(callbackFired || !code)
@@ -2990,8 +2990,8 @@ var checkForContractAddress = function(contract, callback){
  * @method ContractFactory
  * @param {Array} abi
  */
-var ContractFactory = function (ftm, abi) {
-    this.ftm = ftm;
+var ContractFactory = function (crx, abi) {
+    this.crx = crx;
     this.abi = abi;
 
     /**
@@ -3007,7 +3007,7 @@ var ContractFactory = function (ftm, abi) {
     this.new = function () {
         /*jshint maxcomplexity: 7 */
 
-        var contract = new Contract(this.ftm, this.abi);
+        var contract = new Contract(this.crx, this.abi);
 
         // parse arguments
         var options = {}; // required!
@@ -3039,7 +3039,7 @@ var ContractFactory = function (ftm, abi) {
         if (callback) {
 
             // wait for the contract address and check if the code was deployed
-            this.ftm.sendTransaction(options, function (err, hash) {
+            this.crx.sendTransaction(options, function (err, hash) {
                 if (err) {
                     callback(err);
                 } else {
@@ -3053,7 +3053,7 @@ var ContractFactory = function (ftm, abi) {
                 }
             });
         } else {
-            var hash = this.ftm.sendTransaction(options);
+            var hash = this.crx.sendTransaction(options);
             // add the transaction hash
             contract.transactionHash = hash;
             checkForContractAddress(contract);
@@ -3088,7 +3088,7 @@ var ContractFactory = function (ftm, abi) {
  * otherwise calls callback function (err, contract)
  */
 ContractFactory.prototype.at = function (address, callback) {
-    var contract = new Contract(this.ftm, this.abi, address);
+    var contract = new Contract(this.crx, this.abi, address);
 
     // this functions are not part of prototype,
     // because we don't want to spoil the interface
@@ -3128,8 +3128,8 @@ ContractFactory.prototype.getData = function () {
  * @param {Array} abi
  * @param {Address} contract address
  */
-var Contract = function (ftm, abi, address) {
-    this._ftm = ftm;
+var Contract = function (crx, abi, address) {
+    this.crx = crx;
     this.transactionHash = null;
     this.address = address;
     this.abi = abi;
@@ -3371,7 +3371,7 @@ SolidityEvent.prototype.execute = function (indexed, options, callback) {
 
     var o = this.encode(indexed, options);
     var formatter = this.decode.bind(this);
-    return new Filter(o, 'ftm', this._requestManager, watches.ftm(), formatter, callback);
+    return new Filter(o, 'crx', this._requestManager, watches.crx(), formatter, callback);
 };
 
 /**
@@ -3505,7 +3505,7 @@ var getOptions = function (options, type) {
 
 
     switch(type) {
-        case 'ftm':
+        case 'crx':
 
             // make sure topics, get converted to hex
             options.topics = options.topics || [];
@@ -4319,8 +4319,8 @@ var sha3 = require('../utils/sha3');
 /**
  * This prototype should be used to call/sendTransaction to solidity functions
  */
-var SolidityFunction = function (ftm, json, address) {
-    this._ftm = ftm;
+var SolidityFunction = function (crx, json, address) {
+    this._crx = crx;
     this._inputTypes = json.inputs.map(function (i) {
         return i.type;
     });
@@ -4422,12 +4422,12 @@ SolidityFunction.prototype.call = function () {
 
 
     if (!callback) {
-        var output = this._ftm.call(payload, defaultBlock);
+        var output = this._crx.call(payload, defaultBlock);
         return this.unpackOutput(output);
     }
 
     var self = this;
-    this._ftm.call(payload, defaultBlock, function (error, output) {
+    this._crx.call(payload, defaultBlock, function (error, output) {
         if (error) return callback(error, null);
 
         var unpacked = null;
@@ -4457,10 +4457,10 @@ SolidityFunction.prototype.sendTransaction = function () {
     }
 
     if (!callback) {
-        return this._ftm.sendTransaction(payload);
+        return this._crx.sendTransaction(payload);
     }
 
-    this._ftm.sendTransaction(payload, callback);
+    this._crx.sendTransaction(payload, callback);
 };
 
 /**
@@ -4474,10 +4474,10 @@ SolidityFunction.prototype.estimateGas = function () {
     var payload = this.toPayload(args);
 
     if (!callback) {
-        return this._ftm.estimateGas(payload);
+        return this._crx.estimateGas(payload);
     }
 
-    this._ftm.estimateGas(payload, callback);
+    this._crx.estimateGas(payload, callback);
 };
 
 /**
@@ -5549,7 +5549,7 @@ var uncleCountCall = function (args) {
     return (utils.isString(args[0]) && args[0].indexOf('0x') === 0) ? 'eth_getUncleCountByBlockHash' : 'eth_getUncleCountByBlockNumber';
 };
 
-function Ftm(web3) {
+function Crx(web3) {
     this._requestManager = web3._requestManager;
 
     var self = this;
@@ -5569,7 +5569,7 @@ function Ftm(web3) {
     this.sendIBANTransaction = transfer.bind(null, this);
 }
 
-Object.defineProperty(Ftm.prototype, 'defaultBlock', {
+Object.defineProperty(Crx.prototype, 'defaultBlock', {
     get: function () {
         return c.defaultBlock;
     },
@@ -5579,7 +5579,7 @@ Object.defineProperty(Ftm.prototype, 'defaultBlock', {
     }
 });
 
-Object.defineProperty(Ftm.prototype, 'defaultAccount', {
+Object.defineProperty(Crx.prototype, 'defaultAccount', {
     get: function () {
         return c.defaultAccount;
     },
@@ -5756,40 +5756,40 @@ var methods = function () {
 
     var getEvent = new Method({
         name: 'getEvent',
-        call: 'ftm_getEvent',
+        call: 'crx_getEvent',
         params: 2
     });
 
     var getEventHeader = new Method({
         name: 'getEventHeader',
-        call: 'ftm_getEventHeader',
+        call: 'crx_getEventHeader',
         params: 1
     });
 
     var getHeads = new Method({
         name: 'getHeads',
-        call: 'ftm_getHeads',
+        call: 'crx_getHeads',
         params: 1,
         inputFormatter: [formatters.inputBlockNumberFormatter]
     });
 
     var getConsensusTime = new Method({
         name: 'getConsensusTime',
-        call: 'ftm_getConsensusTime',
+        call: 'crx_getConsensusTime',
         params: 1,
         outputFormatter: utils.toDecimal
     });
 
     var currentEpoch = new Method({
         name: 'currentEpoch',
-        call: 'ftm_currentEpoch',
+        call: 'crx_currentEpoch',
         params: 0,
         outputFormatter: utils.toDecimal
     });
 
     var getEpochStats = new Method({
         name: 'getEpochStats',
-        call: 'ftm_getEpochStats',
+        call: 'crx_getEpochStats',
         params: 1,
         inputFormatter: [formatters.inputBlockNumberFormatter],
         outputFormatter: formatters.outputEpochStatsFormatter
@@ -5866,28 +5866,28 @@ var properties = function () {
     ];
 };
 
-Ftm.prototype.contract = function (abi) {
+Crx.prototype.contract = function (abi) {
     var factory = new Contract(this, abi);
     return factory;
 };
 
-Ftm.prototype.filter = function (options, callback, filterCreationErrorCallback) {
-    return new Filter(options, 'ftm', this._requestManager, watches.ftm(), formatters.outputLogFormatter, callback, filterCreationErrorCallback);
+Crx.prototype.filter = function (options, callback, filterCreationErrorCallback) {
+    return new Filter(options, 'crx', this._requestManager, watches.crx(), formatters.outputLogFormatter, callback, filterCreationErrorCallback);
 };
 
-Ftm.prototype.namereg = function () {
+Crx.prototype.namereg = function () {
     return this.contract(namereg.global.abi).at(namereg.global.address);
 };
 
-Ftm.prototype.icapNamereg = function () {
+Crx.prototype.icapNamereg = function () {
     return this.contract(namereg.icap.abi).at(namereg.icap.address);
 };
 
-Ftm.prototype.isSyncing = function (callback) {
+Crx.prototype.isSyncing = function (callback) {
     return new IsSyncing(this._requestManager, callback);
 };
 
-module.exports = Ftm;
+module.exports = Crx;
 
 },{"../../utils/config":18,"../../utils/utils":20,"../contract":25,"../filter":29,"../formatters":30,"../iban":33,"../method":36,"../namereg":44,"../property":45,"../syncing":48,"../transfer":49,"./watches":43}],380:[function(require,module,exports){
 /*
@@ -6841,7 +6841,7 @@ module.exports = Swarm;
 var Method = require('../method');
 
 /// @returns an array of objects describing web3.eth.filter api methods
-var ftm = function () {
+var crx = function () {
     var newFilterCall = function (args) {
         var type = args[0];
 
@@ -6919,7 +6919,7 @@ var shh = function () {
 };
 
 module.exports = {
-    ftm: ftm,
+    crx: crx,
     shh: shh
 };
 
@@ -7309,7 +7309,7 @@ RequestManager.prototype.reset = function (keepIsSyncing) {
  */
 RequestManager.prototype.poll = function () {
     /*jshint maxcomplexity: 6 */
-    this.timeout = setTimeout(this.poll.bind(this), c.FTM_POLLING_TIMEOUT);
+    this.timeout = setTimeout(this.poll.bind(this), c.CRX_POLLING_TIMEOUT);
 
     if (Object.keys(this.polls).length === 0) {
         return;
@@ -7519,23 +7519,23 @@ var exchangeAbi = require('../contracts/SmartExchange.json');
  * @param {Value} value to be tranfered
  * @param {Function} callback, callback
  */
-var transfer = function (ftm, from, to, value, callback) {
+var transfer = function (crx, from, to, value, callback) {
     var iban = new Iban(to);
     if (!iban.isValid()) {
         throw new Error('invalid iban address');
     }
 
     if (iban.isDirect()) {
-        return transferToAddress(ftm, from, iban.address(), value, callback);
+        return transferToAddress(crx, from, iban.address(), value, callback);
     }
 
     if (!callback) {
-        var address = ftm.icapNamereg().addr(iban.institution());
-        return deposit(ftm, from, address, value, iban.client());
+        var address = crx.icapNamereg().addr(iban.institution());
+        return deposit(crx, from, address, value, iban.client());
     }
 
-    ftm.icapNamereg().addr(iban.institution(), function (err, address) {
-        return deposit(ftm, from, address, value, iban.client(), callback);
+    crx.icapNamereg().addr(iban.institution(), function (err, address) {
+        return deposit(crx, from, address, value, iban.client(), callback);
     });
 
 };
@@ -7549,8 +7549,8 @@ var transfer = function (ftm, from, to, value, callback) {
  * @param {Value} value to be tranfered
  * @param {Function} callback, callback
  */
-var transferToAddress = function (ftm, from, to, value, callback) {
-    return ftm.sendTransaction({
+var transferToAddress = function (crx, from, to, value, callback) {
+    return crx.sendTransaction({
         address: to,
         from: from,
         value: value
@@ -7567,9 +7567,9 @@ var transferToAddress = function (ftm, from, to, value, callback) {
  * @param {String} client unique identifier
  * @param {Function} callback, callback
  */
-var deposit = function (ftm, from, to, value, client, callback) {
+var deposit = function (crx, from, to, value, client, callback) {
     var abi = exchangeAbi;
-    return ftm.contract(abi).at(to).deposit(client, {
+    return crx.contract(abi).at(to).deposit(client, {
         from: from,
         value: value
     }, callback);
